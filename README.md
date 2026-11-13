@@ -21,9 +21,8 @@ Aplicativo de cadastro e acompanhamento de leads, campanhas, orçamentos e resul
 
 1. Copie `.env.example` para `.env.local`.
 2. Preencha `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` com os dados do projeto Supabase.
-3. Para convites à equipe, configure `SUPABASE_SECRET_KEY` no servidor. Essa chave nunca deve usar o prefixo `NEXT_PUBLIC_` nem ser publicada no navegador.
-4. Para as análises, configure `GEMINI_API_KEY` obtida no Google AI Studio. A chave é usada apenas no servidor.
-5. Instale dependências e inicie o app:
+3. Para as análises, configure `OPENAI_API_KEY` no ambiente do servidor. A chave é usada apenas no servidor.
+4. Instale dependências e inicie o app:
 
 ```bash
 npm install
@@ -50,9 +49,10 @@ Para um projeto Supabase novo, aplique a migração antes de abrir o app. O proj
 
 ## Publicação
 
-Configure as variáveis de `.env.example` no ambiente de hospedagem. `NEXT_PUBLIC_APP_URL` deve apontar para o endereço publicado para direcionar convites da equipe. No Supabase, ajuste os endereços permitidos de autenticação para incluir o endereço do app. Nunca coloque chaves secretas do Supabase ou do Gemini no Git.
+Configure as variáveis de `.env.example` no ambiente de hospedagem. No Supabase, ajuste os endereços permitidos de autenticação para incluir o endereço publicado do app. Se mudar o endereço, atualize também `APP_URL` em `supabase/functions/marketing-invite/index.ts` e redeploy a função.
+
+Os convites de equipe rodam em uma Edge Function do Supabase e usam a chave administrativa disponibilizada somente no ambiente do próprio Supabase. A chave da OpenAI precisa ser adicionada como variável secreta do servidor para habilitar as análises com IA.
 
 ## Privacidade
 
-As tabelas públicas deste app exigem sessão autenticada e políticas de acesso por organização e perfil. A chave administrativa do Supabase e a chave Gemini são usadas exclusivamente em rotas do servidor. A análise com IA recebe somente métricas agregadas.
-
+As tabelas públicas deste app exigem sessão autenticada e políticas de acesso por organização e perfil. A chave administrativa do Supabase e a chave da OpenAI são usadas exclusivamente em rotas do servidor. A análise com IA recebe somente métricas agregadas.

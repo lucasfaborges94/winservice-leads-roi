@@ -10,10 +10,3 @@ export function createScopedServerClient(accessToken: string) {
   });
 }
 
-export function createAdminServerClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SECRET_KEY;
-  if (!url || !key) throw new Error("SUPABASE_SECRET_KEY não configurada no servidor.");
-  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-}
-

@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { createScopedServerClient } from "@/lib/server-supabase";
 
@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const authorization = request.headers.get("authorization");
   const token = authorization?.startsWith("Bearer ") ? authorization.slice(7) : "";
   if (!token) return NextResponse.json({ error: "Faça login para continuar." }, { status: 401 });
-  if (!process.env.GEMINI_API_KEY) return NextResponse.json({ error: "Configure a chave do Google AI Studio no servidor." }, { status: 503 });
+  if (!process.env.OPENAI_API_KEY) return NextResponse.json({ error: "Configure OPENAI_API_KEY no servidor para habilitar as análises com IA." }, { status: 503 });
 
   const body = await request.json().catch(() => ({}));
   const organizationId = typeof body.organizationId === "string" ? body.organizationId : "";
@@ -27,26 +27,23 @@ export async function POST(request: Request) {
   if (error) return NextResponse.json({ error: "Não foi possível carregar os indicadores da organização." }, { status: 400 });
 
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const response = await ai.interactions.create({
-      model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+    const ai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const response = await ai.responses.create({
+      model: process.env.OPENAI_MODEL || "gpt-6-astra",
       input: [
+        { role: "developer", content: [
         "Você é um analista de marketing e vendas para uma assistência técnica local.",
         "Analise os dados agregados abaixo e responda em português do Brasil, em até 6 tópicos curtos.",
         "Priorize gargalos do funil, custo por lead/qualificado/cliente, receita, retorno sobre investimento e ações práticas.",
         "Não invente dados. Se faltarem gastos ou receita, diga o que precisa ser preenchido.",
         "Os dados não contêm nomes, telefones, e-mails nem observações privadas.",
-        JSON.stringify(data),
-      ].join("\n\n"),
+        ].join("\n\n") },
+        { role: "user", content: JSON.stringify(data) },
+      ],
     });
-    const analysis = (response.outputs || [])
-      .filter((output) => output.type === "text")
-      .map((output) => output.text || "")
-      .filter(Boolean)
-      .join("\n");
+    const analysis = response.output_text;
     return NextResponse.json({ analysis: analysis || "Não foi possível gerar uma análise." });
   } catch {
-    return NextResponse.json({ error: "O Google AI Studio não respondeu. Confira a chave e o acesso à API." }, { status: 502 });
+    return NextResponse.json({ error: "A OpenAI não respondeu. Confira a chave e o acesso à API." }, { status: 502 });
   }
 }
-
