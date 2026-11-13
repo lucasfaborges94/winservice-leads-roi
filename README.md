@@ -1,6 +1,6 @@
 # Winservice Leads & ROI
 
-Aplicativo de cadastro e acompanhamento de leads, campanhas, orçamentos e resultados de vendas. Feito com Next.js, Supabase Auth/Postgres e Google AI Studio (Gemini).
+Aplicativo de cadastro e acompanhamento de leads, campanhas, orçamentos e resultados de vendas. Feito com Next.js, Supabase Auth/Postgres e OpenAI Responses API.
 
 ## O que acompanha
 
@@ -8,14 +8,14 @@ Aplicativo de cadastro e acompanhamento de leads, campanhas, orçamentos e resul
 - Cadastro de leads com campanha e origem de aquisição separados do canal de contato. Exemplo: origem **Google Ads**, campanha **Geladeiras Porto Alegre**, canal **WhatsApp**, identificador **+55...**. Também aceita Telegram, e-mail, ligação, Instagram, site e outros.
 - Atribuição UTM, termo de busca, landing page, GCLID, WBRAID e GBRAID.
 - Funil comercial, qualificação, histórico de atendimento, próximos retornos, emissão e acompanhamento de orçamentos, pagamentos e receita realizada.
-- Painel de custo por lead/cliente, conversões do funil, faturamento e ROI; análise agregada com Gemini, sem enviar dados pessoais dos leads.
+- Painel de custo por lead/cliente, conversões do funil, faturamento e ROI; análise agregada com OpenAI, sem enviar dados pessoais dos leads.
 - Login, convite de equipe e perfis de proprietário, administrador, vendas, marketing e analista. As permissões são aplicadas no banco por RLS.
 
 ## Requisitos
 
 - Node.js 20.9 ou superior.
 - Projeto Supabase com Auth por e-mail habilitado.
-- Chave de API do Google AI Studio para usar a análise inteligente.
+- Chave de API da OpenAI para usar a análise inteligente.
 
 ## Configuração local
 
@@ -56,3 +56,4 @@ Os convites de equipe rodam em uma Edge Function do Supabase e usam a chave admi
 ## Privacidade
 
 As tabelas públicas deste app exigem sessão autenticada e políticas de acesso por organização e perfil. A chave administrativa do Supabase e a chave da OpenAI são usadas exclusivamente em rotas do servidor. A análise com IA recebe somente métricas agregadas.
+
