@@ -83,18 +83,27 @@ export default function Home() {
   const [aiAnalysis, setAiAnalysis] = useState("");
 
   useEffect(() => {
-    if (!supabase) { setBooting(false); return; }
+    if (!supabase) return;
     let alive = true;
-    supabase.auth.getSession().then(({ data }) => { if (alive) setSession(data.session); });
+    supabase.auth.getSession().then(({ data }) => {
+      if (!alive) return;
+      setSession(data.session);
+      if (!data.session) setBooting(false);
+    });
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      if (alive) { setSession(nextSession); setAuthMessage(""); setAuthError(""); }
+      if (alive) {
+        setSession(nextSession); setAuthMessage(""); setAuthError("");
+        if (!nextSession) {
+          setBooting(false); setOrganizationId(""); setLeads([]); setQuotes([]);
+        }
+      }
     });
     return () => { alive = false; authListener.subscription.unsubscribe(); };
   }, [supabase]);
 
   useEffect(() => {
     if (!supabase) return;
-    if (!session?.user) { setBooting(false); setOrganizationId(""); setLeads([]); setQuotes([]); return; }
+    if (!session?.user) return;
     let alive = true;
     const start = async () => {
       setBooting(true); setError("");
@@ -172,12 +181,6 @@ export default function Home() {
     return searchMatch && stageMatch;
   }), [leads, contacts, search, stageFilter]);
 
-  const allRevenue = dashboard?.totals.revenue ?? leads.filter((lead) => lead.stage === "won").reduce((sum, lead) => sum + Number(lead.won_revenue), 0);
-  const wonLeads = dashboard?.totals.won ?? leads.filter((lead) => lead.stage === "won").length;
-  const totalLeads = dashboard?.totals.leads ?? leads.length;
-  const qualifiedLeads = dashboard?.totals.qualified ?? leads.filter((lead) => lead.is_qualified).length;
-  const totalSpend = dashboard?.totals.campaign_spend ?? 0;
-  const pendingQuotes = quotes.filter((quote) => ["sent", "follow_up", "approved"].includes(quote.status));
   const followUpsDue = quotes.filter((quote) => quote.next_follow_up_at && new Date(quote.next_follow_up_at) <= new Date() && !["paid", "rejected", "expired"].includes(quote.status));
 
   function openLead(lead: Lead) { setSelectedLead(lead); }
@@ -526,7 +529,9 @@ function CampaignModal({ campaign, onClose, onSubmit }: { campaign: Campaign | n
 }
 
 function QuoteModal({ lead, onClose, onSubmit }: { lead: Lead; onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void }) {
-  return <DialogShell title="Emitir orçamento" subtitle={`Proposta para ${lead.full_name} · ${lead.appliance}`} onClose={onClose}><form className="modal-form" onSubmit={onSubmit}><div className="lead-context"><div className="person-avatar">{initials(lead.full_name)}</div><div><strong>{lead.full_name}</strong><span>{lead.city}{lead.neighborhood ? ` · ${lead.neighborhood}` : ""}</span></div></div><label>Título do serviço<input name="title" placeholder="Ex.: Troca do termostato" required/></label><label>Número do orçamento<input name="quote_number" placeholder="Ex.: ORC-2026-014"/></label><label>Valor (R$)<input type="number" name="amount" min="0" step="0.01" required/></label><label>Descrição<textarea name="description" rows={2} placeholder="Serviço, peças e condições"/></label><div className="form-grid"><label>Emitido em<input type="date" name="issued_at" defaultValue={new Date().toISOString().slice(0,10)}/></label><label>Válido até<input type="date" name="valid_until"/></label><label>Próximo acompanhamento<input type="datetime-local" name="next_follow_up_at" defaultValue={localInputDate(new Date(Date.now()+24*60*60*1000))}/></label><label>Status inicial<select name="status" defaultValue="sent"><option value="sent">Enviado</option><option value="draft">Rascunho</option></select></label></div><label>Observações internas<textarea name="notes" rows={2}/></label><div className="modal-footer"><button type="button" className="button button-secondary" onClick={onClose}>Cancelar</button><button className="button button-primary"><Send size={15}/> Registrar orçamento</button></div></form></DialogShell>;
+  const [issuedAt] = useState(() => new Date().toISOString().slice(0, 10));
+  const [followUpAt] = useState(() => localInputDate(new Date(Date.now() + 24 * 60 * 60 * 1000)));
+  return <DialogShell title="Emitir orçamento" subtitle={`Proposta para ${lead.full_name} · ${lead.appliance}`} onClose={onClose}><form className="modal-form" onSubmit={onSubmit}><div className="lead-context"><div className="person-avatar">{initials(lead.full_name)}</div><div><strong>{lead.full_name}</strong><span>{lead.city}{lead.neighborhood ? ` · ${lead.neighborhood}` : ""}</span></div></div><label>Título do serviço<input name="title" placeholder="Ex.: Troca do termostato" required/></label><label>Número do orçamento<input name="quote_number" placeholder="Ex.: ORC-2026-014"/></label><label>Valor (R$)<input type="number" name="amount" min="0" step="0.01" required/></label><label>Descrição<textarea name="description" rows={2} placeholder="Serviço, peças e condições"/></label><div className="form-grid"><label>Emitido em<input type="date" name="issued_at" defaultValue={issuedAt}/></label><label>Válido até<input type="date" name="valid_until"/></label><label>Próximo acompanhamento<input type="datetime-local" name="next_follow_up_at" defaultValue={followUpAt}/></label><label>Status inicial<select name="status" defaultValue="sent"><option value="sent">Enviado</option><option value="draft">Rascunho</option></select></label></div><label>Observações internas<textarea name="notes" rows={2}/></label><div className="modal-footer"><button type="button" className="button button-secondary" onClick={onClose}>Cancelar</button><button className="button button-primary"><Send size={15}/> Registrar orçamento</button></div></form></DialogShell>;
 }
 
 function InviteModal({ organizationId, session, onClose, onDone, onError }: { organizationId: string; session: Session; onClose: () => void; onDone: (message: string) => void; onError: (message: string) => void }) {
