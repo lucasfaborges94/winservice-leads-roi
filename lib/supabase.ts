@@ -11,4 +11,3 @@ export function getSupabaseBrowser() {
   });
   return browserClient;
 }
-

@@ -376,4 +376,3 @@ end;
 $$;
 revoke all on function public.marketing_dashboard(uuid) from public, anon;
 grant execute on function public.marketing_dashboard(uuid) to authenticated;
-

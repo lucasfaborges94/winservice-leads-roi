@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const INVITABLE_ROLES = ["admin", "sales", "marketing", "analyst"];
+const INVITABLE_ROLES = ["admin", "sales", "marketing", "analyst", "traffic_manager"];
 const APP_URL = "https://evolution-leads-roi.huvyyz.easypanel.host";
 
 function respond(body: Record<string, unknown>, status = 200) {
@@ -28,7 +28,7 @@ Deno.serve(async (request: Request) => {
   const organizationId = typeof body.organizationId === "string" ? body.organizationId : "";
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   const role = typeof body.role === "string" ? body.role : "";
-  if (!organizationId || !/^\S+@\S+\.\S+$/.test(email) || !INVITABLE_ROLES.includes(role)) {
+  if (!organizationId || !/^\S+@\S+\.\S+$/.test(email) || (!INVITABLE_ROLES.includes(role) && !role.startsWith("custom:"))) {
     return respond({ error: "Confira o e-mail e o perfil escolhido." }, 400);
   }
 
@@ -47,9 +47,15 @@ Deno.serve(async (request: Request) => {
   if (authError || !auth.user) return respond({ error: "Sessão inválida." }, 401);
 
   const { data: membership } = await callerClient.from("marketing_memberships")
-    .select("role").eq("organization_id", organizationId).eq("user_id", auth.user.id).maybeSingle();
-  if (!membership || !["owner", "admin"].includes(membership.role)) {
+    .select("role,status").eq("organization_id", organizationId).eq("user_id", auth.user.id).maybeSingle();
+  if (!membership || membership.status !== "active" || !["owner", "admin"].includes(membership.role)) {
     return respond({ error: "Somente proprietários e administradores podem convidar pessoas." }, 403);
+  }
+
+  if (role.startsWith("custom:")) {
+    const { data: customRole } = await callerClient.from("marketing_custom_roles")
+      .select("role_key").eq("organization_id", organizationId).eq("role_key", role).maybeSingle();
+    if (!customRole) return respond({ error: "A função personalizada não pertence a esta equipe." }, 400);
   }
 
   const adminClient = createClient(supabaseUrl, serviceRoleKey, {
@@ -67,6 +73,8 @@ Deno.serve(async (request: Request) => {
     user_id: invitation.user.id,
     email,
     role,
+    status: "invited",
+    invited_at: new Date().toISOString(),
     created_by: auth.user.id,
   }, { onConflict: "organization_id,user_id" });
   if (membershipError) {

@@ -19,7 +19,13 @@ export async function POST(request: Request) {
   if (authError || !auth.user) return NextResponse.json({ error: "Sessão inválida." }, { status: 401 });
   const { data: membership } = await supabase.from("marketing_memberships")
     .select("role").eq("organization_id", organizationId).eq("user_id", auth.user.id).maybeSingle();
-  if (!membership || !["owner", "admin", "marketing", "analyst"].includes(membership.role)) {
+  let canAnalyze = Boolean(membership && ["owner", "admin", "marketing", "analyst", "traffic_manager"].includes(membership.role));
+  if (membership?.role.startsWith("custom:")) {
+    const { data: customRole } = await supabase.from("marketing_custom_roles")
+      .select("permissions").eq("role_key", membership.role).maybeSingle();
+    canAnalyze = Boolean(customRole?.permissions?.some((permission: string) => ["analytics", "campaign_manage"].includes(permission)));
+  }
+  if (!canAnalyze) {
     return NextResponse.json({ error: "Seu perfil não tem acesso à análise de campanhas." }, { status: 403 });
   }
 

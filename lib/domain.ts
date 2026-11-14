@@ -1,10 +1,11 @@
-export type Role = "owner" | "admin" | "sales" | "marketing" | "analyst";
+export type Role = "owner" | "admin" | "sales" | "marketing" | "analyst" | "traffic_manager" | `custom:${string}`;
 export type LeadStage = "new" | "contacted" | "qualified" | "quote_sent" | "negotiation" | "won" | "lost";
 export type QuoteStatus = "draft" | "sent" | "follow_up" | "approved" | "rejected" | "expired" | "paid";
 
 export type CampaignOption = { id: string; name: string; platform: string };
 export type Campaign = CampaignOption & {
   organization_id: string;
+  manager_user_id: string | null;
   external_campaign_id: string | null;
   objective: string | null;
   landing_page: string | null;
@@ -130,20 +131,22 @@ export const QUOTE_STATUSES: { id: QuoteStatus; label: string }[] = [
   { id: "paid", label: "Pago" },
 ];
 
-export const ROLE_LABELS: Record<Role, string> = {
+export const ROLE_LABELS: Record<string, string> = {
   owner: "Proprietário",
   admin: "Administrador",
   sales: "Vendas",
   marketing: "Marketing",
   analyst: "Analista",
+  traffic_manager: "Gestor de tráfego",
 };
 
-export const ROLE_DESCRIPTIONS: Record<Role, string> = {
+export const ROLE_DESCRIPTIONS: Record<string, string> = {
   owner: "Acesso completo e controle da equipe",
   admin: "Gerencia leads, campanhas, orçamentos e equipe",
   sales: "Gerencia leads, contatos e orçamentos",
   marketing: "Gerencia campanhas e acompanha resultados agregados",
   analyst: "Consulta campanhas, funil e ROI sem dados pessoais",
+  traffic_manager: "Consulta apenas as campanhas atribuídas, com métricas agregadas",
 };
 
 export const BRL = (value: number | null | undefined) =>
@@ -168,8 +171,7 @@ export const roiPercent = (revenue: number, investment: number) => investment > 
 
 export const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
-export const canManageCrm = (role: Role) => ["owner", "admin", "sales"].includes(role);
-export const canManageCampaigns = (role: Role) => ["owner", "admin", "marketing"].includes(role);
-export const canSeeAnalytics = (role: Role) => ["owner", "admin", "marketing", "analyst"].includes(role);
+export const canManageCrm = (role: Role, permissions: string[] = []) => ["owner", "admin", "sales"].includes(role) || permissions.includes("crm");
+export const canManageCampaigns = (role: Role, permissions: string[] = []) => ["owner", "admin", "marketing"].includes(role) || permissions.includes("campaign_manage");
+export const canSeeAnalytics = (role: Role, permissions: string[] = []) => ["owner", "admin", "marketing", "analyst", "traffic_manager"].includes(role) || permissions.some((permission) => ["campaign_manage", "analytics"].includes(permission));
 export const canManageTeam = (role: Role) => ["owner", "admin"].includes(role);
-
