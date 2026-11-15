@@ -57,3 +57,6 @@ Os convites de equipe rodam em uma Edge Function do Supabase e usam a chave admi
 
 As tabelas públicas deste app exigem sessão autenticada e políticas de acesso por organização e perfil. A chave administrativa do Supabase e a chave da OpenAI são usadas exclusivamente em rotas do servidor. A análise com IA recebe somente métricas agregadas.
 
+## Integração Chatwoot
+
+Consulte [Integração Chatwoot com o Leads ROI](docs/integracao-chatwoot.md) para a configuração do MVP e a migração para várias empresas.
