@@ -6,6 +6,7 @@ export type CampaignOption = { id: string; name: string; platform: string };
 export type Campaign = CampaignOption & {
   organization_id: string;
   manager_user_id: string | null;
+  expected_whatsapp_message: string | null;
   external_campaign_id: string | null;
   objective: string | null;
   landing_page: string | null;
@@ -175,3 +176,4 @@ export const canManageCrm = (role: Role, permissions: string[] = []) => ["owner"
 export const canManageCampaigns = (role: Role, permissions: string[] = []) => ["owner", "admin", "marketing"].includes(role) || permissions.includes("campaign_manage");
 export const canSeeAnalytics = (role: Role, permissions: string[] = []) => ["owner", "admin", "marketing", "analyst", "traffic_manager"].includes(role) || permissions.some((permission) => ["campaign_manage", "analytics"].includes(permission));
 export const canManageTeam = (role: Role) => ["owner", "admin"].includes(role);
+
