@@ -1,0 +1,73 @@
+name: Relatório de publicação
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Gerar relatório Markdown
+        shell: bash
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          set -euo pipefail
+          base="$BEFORE"
+          has_previous=true
+
+          if [[ "$base" =~ ^0+$ ]] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            has_previous=false
+          fi
+
+          {
+            printf '# Relatório de publicação\n\n'
+            printf 'Branch: `main` · %s\n\n' "$(date -u +%FT%TZ)"
+            printf -- '- Revisão recebida: [`%s`](%s/commit/%s)\n' "$AFTER" "$REPOSITORY_URL" "$AFTER"
+            if "$has_previous"; then
+              printf -- '- Revisão anterior ao push: [`%s`](%s/commit/%s)\n' "$base" "$REPOSITORY_URL" "$base"
+            else
+              printf -- '- Revisão anterior ao push: indisponível no checkout.\n'
+            fi
+            printf '\n## Commits\n\n'
+            if "$has_previous"; then
+              git log --format='%h %s' "$base..$AFTER" | sed 's/^/    /'
+            else
+              git log -1 --format='%h %s' "$AFTER" | sed 's/^/    /'
+            fi
+            printf '\n## Arquivos alterados\n\n'
+            if "$has_previous"; then
+              git diff --name-status --find-renames "$base" "$AFTER" | sed 's/^/    /'
+              printf '\n'
+              if ! git diff --quiet "$base" "$AFTER" -- supabase/; then
+                printf '> Este push altera arquivos do Supabase. Confira migrações e Edge Functions antes de voltar o app.\n'
+              fi
+            else
+              printf 'Comparação indisponível. Consulte o histórico do GitHub.\n'
+            fi
+            printf '\n## Como retornar\n\n'
+            printf '1. Confirme no Easypanel o último deploy bem-sucedido.\n'
+            printf '2. Reverta o commit problemático em um PR ou publique uma branch criada a partir da revisão estável.\n'
+            printf '3. Confira separadamente o banco, as Edge Functions e a configuração ativa.\n\n'
+            printf '[Guia completo de retorno](%s/blob/%s/docs/publicacao-e-retorno.md)\n' "$REPOSITORY_URL" "$AFTER"
+          } > relatorio-publicacao.md
+          cat relatorio-publicacao.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Disponibilizar o Markdown
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-publicacao
+          path: relatorio-publicacao.md
+          retention-days: 90
+          if-no-files-found: error
