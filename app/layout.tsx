@@ -1,10 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Winservice | Leads & ROI",
+  manifest: "/manifest.webmanifest",
+  icons: { icon: "/winservice-192.png", apple: "/winservice-apple-touch.png" },
+  appleWebApp: { capable: true, title: "Leads & ROI" },
   description: "Acompanhe leads, orçamentos, campanhas e faturamento da Winservice.",
 };
+
+export const viewport: Viewport = { themeColor: "#092748", viewportFit: "cover" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="pt-BR"><body>{children}</body></html>;

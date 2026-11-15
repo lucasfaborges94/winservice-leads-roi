@@ -64,3 +64,19 @@ Consulte [Integração Chatwoot com o Leads ROI](docs/integracao-chatwoot.md) pa
 ## Histórico de publicação
 
 Veja o [guia de publicação e retorno](docs/publicacao-e-retorno.md) e os relatórios de cada push na aba **Actions**.
+
+## Histórico de pagamentos e instalação no celular
+
+Em **Campanhas → Histórico de pagamentos**, consulte os lançamentos por data.
+Proprietários, administradores e marketing podem registrar valor em reais, data,
+forma de pagamento, referência e observações. O investimento informado na campanha
+continua sendo a base do ROI.
+
+Aplique `supabase/migrations/202611150001_marketing_campaign_payments.sql` antes
+de publicar esta versão. O histórico começa com os pagamentos registrados após
+a migração ou lançados manualmente com suas datas originais.
+
+Abra o app pelo endereço HTTPS e toque em **Instalar app**. No Android, o Chrome
+oferece a instalação no próprio app ou no menu do navegador. No iPhone, use
+**Safari → Compartilhar → Adicionar à Tela de Início**. O app precisa de conexão
+para consultar ou registrar dados.
