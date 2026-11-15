@@ -8,8 +8,8 @@ import { BRL, fullDate, localInputDate, type Campaign } from "@/lib/domain";
 type Payment = { id: string; paid_on: string; amount: number; method: string | null; reference: string | null; notes: string | null };
 const pageSize = 20;
 
-export default function CampaignPayments({ campaign, client, editable, onClose }: {
-  campaign: Campaign; client: SupabaseClient; editable: boolean; onClose: () => void;
+export default function CampaignPayments({ campaign, client, editable, onSaved, onClose }: {
+  campaign: Campaign; client: SupabaseClient; editable: boolean; onSaved: () => void; onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const saving = useRef(false);
@@ -75,6 +75,7 @@ export default function CampaignPayments({ campaign, client, editable, onClose }
       setPage(0);
       setRevision((value) => value + 1);
       setNotice("Pagamento registrado.");
+      onSaved();
     } catch {
       setFormError("Não foi possível confirmar o registro. Tente novamente.");
     } finally {
@@ -91,7 +92,7 @@ export default function CampaignPayments({ campaign, client, editable, onClose }
         <button type="button" className="icon-button" aria-label="Fechar" disabled={busy} onClick={onClose}><X size={19} /></button>
       </div>
       <div className="payment-content">
-        <p className="payment-context">Pagamentos à plataforma são registrados separadamente do investimento usado no ROI.</p>
+        <p className="payment-context">A soma dos pagamentos é o investimento da campanha usado no cálculo do ROI.</p>
         {editable && (
           <form className="payment-form" onSubmit={save}>
             <fieldset className="form-grid" disabled={busy}>

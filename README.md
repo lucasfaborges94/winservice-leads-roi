@@ -69,8 +69,7 @@ Veja o [guia de publicação e retorno](docs/publicacao-e-retorno.md) e os relat
 
 Em **Campanhas → Histórico de pagamentos**, consulte os lançamentos por data.
 Proprietários, administradores e marketing podem registrar valor em reais, data,
-forma de pagamento, referência e observações. O investimento informado na campanha
-continua sendo a base do ROI.
+forma de pagamento, referência e observações. O investimento e o ROI usam a soma dos pagamentos registrados.
 
 Aplique `supabase/migrations/202611150001_marketing_campaign_payments.sql` antes
 de publicar esta versão. O histórico começa com os pagamentos registrados após
@@ -80,3 +79,35 @@ Abra o app pelo endereço HTTPS e toque em **Instalar app**. No Android, o Chrom
 oferece a instalação no próprio app ou no menu do navegador. No iPhone, use
 **Safari → Compartilhar → Adicionar à Tela de Início**. O app precisa de conexão
 para consultar ou registrar dados.
+
+
+## Relatórios diários de campanhas
+
+Em **Meu perfil → Integração de relatórios diários**, um proprietário ou administrador
+gera uma chave para o workflow. Cadastre-a na credencial do nó HTTP Request como
+`Authorization: Bearer <chave>`. A nova chave substitui a anterior.
+
+No cartão da campanha, abra **Relatórios diários** para copiar o ID interno. Para
+cada campanha e cada dia, envie um `POST /api/campaigns/daily-reports` com
+`Content-Type: application/json` e este corpo:
+
+```json
+{
+  "campaign_id": "66fe1f6b-24da-4e23-a067-a18ac00a821d",
+  "date": "2026-11-14",
+  "impressions": 1200,
+  "clicks": 35,
+  "conversions": 2.5
+}
+```
+
+Envie o total daquele dia no fuso da conta de anúncios. Um reenvio da mesma
+campanha e data substitui os números daquele dia e recalcula os totais. A rota
+retorna 200 ao aceitar, 400 para dados inválidos, 401 para uma chave inválida,
+404 para uma campanha fora da equipe da chave ou inexistente e 503 para uma
+falha temporária no serviço. O workflow pode reenviar o relatório após uma falha.
+
+A migração `202611150002_campaign_daily_reports.sql` guarda os antigos totais
+manuais em `private.marketing_campaign_legacy_totals`. Para recuperar um período
+anterior, envie os relatórios reais por data e confira se os pagamentos daquele
+período já constam no histórico antes de lançá-los.

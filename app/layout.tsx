@@ -12,5 +12,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#092748", viewportFit: "cover" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="pt-BR"><body>{children}</body></html>;
+  return (
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html:
+          'try{var t=localStorage.getItem("winservice-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch{}',
+        }} />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
 }
