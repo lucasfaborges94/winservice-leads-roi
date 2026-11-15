@@ -60,3 +60,7 @@ As tabelas públicas deste app exigem sessão autenticada e políticas de acesso
 ## Integração Chatwoot
 
 Consulte [Integração Chatwoot com o Leads ROI](docs/integracao-chatwoot.md) para a configuração do MVP e a migração para várias empresas.
+
+## Histórico de publicação
+
+Veja o [guia de publicação e retorno](docs/publicacao-e-retorno.md) e os relatórios de cada push na aba **Actions**.
