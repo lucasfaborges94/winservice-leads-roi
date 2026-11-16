@@ -1,0 +1,117 @@
+/* Winservice v1.0 — propriedades compartilhadas. */
+:root {
+  --ws-navy: #001439;
+  --ws-amber: #FFA700;
+  --ws-paper: #F7F9FC;
+  --ws-font: "Inter", "Segoe UI", Arial, sans-serif;
+  --ws-space-1: 4px;
+  --ws-space-2: 8px;
+  --ws-space-3: 12px;
+  --ws-space-4: 16px;
+  --ws-space-6: 24px;
+  --ws-space-8: 32px;
+  --ws-space-12: 48px;
+  --ws-space-16: 64px;
+  --ws-radius-control: 8px;
+  --ws-radius-card: 16px;
+  --ws-target: 44px;
+  --ws-body-size: 1rem;
+  --ws-body-line: 1.55;
+  --ws-small-size: .875rem;
+  --ws-heading-size: clamp(1.5rem, 3vw, 2rem);
+  --ws-display-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+:root, [data-theme="light"] {
+  color-scheme: light;
+  --ws-canvas: #F7F9FC;
+  --ws-surface: #FFFFFF;
+  --ws-surface-alt: #EDF2F8;
+  --ws-text: #001439;
+  --ws-text-muted: #455773;
+  --ws-border: #D0DAE7;
+  --ws-control-border: #687A92;
+  --ws-action: #FFA700;
+  --ws-action-hover: #F29400;
+  --ws-on-action: #001439;
+  --ws-link: #174785;
+  --ws-focus: #174785;
+  --ws-success: #155B3D;
+  --ws-warning: #784600;
+  --ws-error: #9F253B;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+    --ws-canvas: #09172C;
+    --ws-surface: #112441;
+    --ws-surface-alt: #19334F;
+    --ws-text: #F7F9FC;
+    --ws-text-muted: #BECDDF;
+    --ws-border: #344C67;
+    --ws-control-border: #8199B4;
+    --ws-action: #FFA700;
+    --ws-action-hover: #FFC04D;
+    --ws-on-action: #001439;
+    --ws-link: #9CCAFF;
+    --ws-focus: #FFC04D;
+    --ws-success: #83E0B4;
+    --ws-warning: #FFD085;
+    --ws-error: #FFAAB5;
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ws-canvas: #09172C;
+  --ws-surface: #112441;
+  --ws-surface-alt: #19334F;
+  --ws-text: #F7F9FC;
+  --ws-text-muted: #BECDDF;
+  --ws-border: #344C67;
+  --ws-control-border: #8199B4;
+  --ws-action: #FFA700;
+  --ws-action-hover: #FFC04D;
+  --ws-on-action: #001439;
+  --ws-link: #9CCAFF;
+  --ws-focus: #FFC04D;
+  --ws-success: #83E0B4;
+  --ws-warning: #FFD085;
+  --ws-error: #FFAAB5;
+}
+
+.ws-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ws-space-2);
+  min-block-size: var(--ws-target);
+  padding: var(--ws-space-2) var(--ws-space-4);
+  border: 1px solid transparent;
+  border-radius: var(--ws-radius-control);
+  background: var(--ws-action);
+  color: var(--ws-on-action);
+  font: 700 var(--ws-body-size)/1.3 var(--ws-font);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ws-button:hover { background: var(--ws-action-hover); }
+.ws-button--secondary {
+  background: var(--ws-surface);
+  border-color: var(--ws-control-border);
+  color: var(--ws-text);
+}
+.ws-button--secondary:hover { background: var(--ws-surface-alt); }
+
+.ws-button:disabled {
+  background: var(--ws-surface-alt);
+  border-color: var(--ws-border);
+  color: var(--ws-text-muted);
+  cursor: not-allowed;
+}
+.ws-focus:focus-visible {
+  outline: 2px solid var(--ws-focus);
+  outline-offset: 3px;
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">WS — monograma Winservice</title>
+  <desc id="logo-desc">Fundo escuro. Azul marinho e âmbar.</desc>
+  <rect x="0" y="0" width="1000" height="1000" rx="150" fill="#FFA700"/>
+  <path fill="#001439" transform="translate(110 334) scale(1)" d="M0 0 H106 Q113 0 116 8 L181 143 L255 8 Q259 0 266 0 H303 Q311 0 315 8 L380 143 L444 23 Q458 0 490 0 H780 L736 80 Q733 85 725 85 H548 Q529 85 518 106 L390 325 Q386 332 378 332 H366 Q359 332 355 325 L280 164 L191 325 Q188 332 180 332 H170 Q164 332 161 325 Z M533 114 Q541 122 555 122 H666 C732 122 780 164 780 227 C780 286 731 332 666 332 H414 L460 248 H656 C670 248 680 240 680 227 C680 214 670 206 656 206 H544 Q513 206 491 194 Z"/>
+</svg>

@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./winservice-brand.css";
+import "./mobile-brand.css";
 
 export const metadata: Metadata = {
   title: "Winservice | Leads & ROI",
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
   description: "Acompanhe leads, orçamentos, campanhas e faturamento da Winservice.",
 };
 
-export const viewport: Viewport = { themeColor: "#092748", viewportFit: "cover" };
+export const viewport: Viewport = { themeColor: "#001439", viewportFit: "cover" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

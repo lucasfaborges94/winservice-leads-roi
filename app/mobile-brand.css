@@ -1,0 +1,96 @@
+:root {
+  --ink: var(--ws-text);
+  --muted: var(--ws-text-muted);
+  --soft: var(--ws-text-muted);
+  --line: var(--ws-border);
+  --surface: var(--ws-surface);
+  --canvas: var(--ws-canvas);
+  --purple: var(--ws-link);
+  --purple-dark: var(--ws-link);
+  --purple-light: var(--ws-surface-alt);
+  --winservice-navy: var(--ws-text);
+  --winservice-blue: var(--ws-link);
+  --winservice-ice: var(--ws-surface-alt);
+  --winservice-border: var(--ws-border);
+  --green: var(--ws-success);
+  --orange: var(--ws-warning);
+  --red: var(--ws-error);
+  --blue: var(--ws-link);
+}
+html, body, button, input, select, textarea, h1, h2, h3 {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+.app-shell, body {background:var(--ws-canvas);color:var(--ws-text)}
+.sidebar,.topbar,.panel,.stat-card,.campaign-card,.modal-card,.detail-drawer,.auth-card {
+  background:var(--ws-surface);color:var(--ws-text);border-color:var(--ws-border);
+}
+.panel,.stat-card,.campaign-card,.modal-card {border-radius:var(--ws-radius-card)}
+.button,.modal-form input,.modal-form select,.modal-form textarea,.crm-filters input,.crm-filters select {border-radius:var(--ws-radius-control)}
+.button.button-primary {background:var(--ws-action);color:var(--ws-on-action)}
+.button.button-primary:hover {background:var(--ws-action-hover);color:var(--ws-on-action)}
+.button-secondary,.heading-filter,.filter-select,.search-wrap,.avatar-button,.icon-button,.row-menu,
+.modal-form input,.modal-form select,.modal-form textarea,.detail-drawer select,.member-controls select,.quote-action {
+  color:var(--ws-text);background:var(--ws-surface);border-color:var(--ws-control-border);
+}
+.data-table thead,.form-section-title,.lead-context,.detail-status-box,.attribution-card,.workspace-switch,.nav-item.active {
+  background:var(--ws-surface-alt);color:var(--ws-text);
+}
+.nav-item {color:var(--ws-text-muted)}
+.nav-item.active {box-shadow:inset 0 -3px var(--ws-action)}
+a.campaign-url,.text-button,.detail-quote a {color:var(--ws-link)}
+a.campaign-url,.detail-quote a {text-decoration:underline}
+:where(a,button,input,select,textarea,summary):focus-visible {outline:2px solid var(--ws-focus);outline-offset:2px}
+.brand-symbol {display:inline-flex;align-items:center;flex:none}
+.brand-symbol img {display:block;width:44px;height:44px;object-fit:contain}
+.brand-symbol .brand-dark,.brand-symbol .brand-horizontal {display:none}
+:root[data-theme="dark"] .brand-symbol .brand-dark {display:block}
+:root[data-theme="dark"] .brand-symbol .brand-light {display:none}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .brand-symbol .brand-dark {display:block}
+  :root:not([data-theme="light"]) .brand-symbol .brand-light {display:none}
+}
+.auth-page,.auth-story {background:var(--ws-navy)}
+.auth-story .brand-symbol :is(.brand-light,.brand-dark) {display:none}
+.auth-story .brand-symbol .brand-horizontal {display:block;width:260px;height:auto}
+.brand-lockup,.mobile-brand {flex-direction:row;align-items:center;gap:12px}
+.topbar-logo {width:auto}
+.topbar-logo .brand-symbol img {width:36px;height:36px}
+.main-panel,.page-content,.panel,.campaign-card,.form-grid>* {min-inline-size:0}
+.snapshot-campaign,.snapshot-amount,.member-main,.role-item>div,.topbar .breadcrumbs {min-inline-size:0}
+.snapshot-campaign strong,.snapshot-campaign span,.member-main strong,.member-main span {overflow-wrap:anywhere}
+@media(max-width:700px) {
+  .app-shell,.main-panel,.page-content {inline-size:100%;max-inline-size:100%}
+  .page-content {padding-inline:12px}
+  .topbar {padding-inline:12px}
+  .topbar .breadcrumbs strong {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .top-actions {flex:none}
+  .main-nav {display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:4px}
+  .main-nav .nav-item {min-height:52px;height:auto;padding:4px;gap:2px}
+  .main-nav .nav-item span {white-space:normal;overflow-wrap:normal;text-align:center;line-height:1.15}
+  .page-content,.app-shell.compact-dashboard .page-content {padding-bottom:calc(136px + env(safe-area-inset-bottom))}
+  .overview-main-grid,.overview-bottom-grid,.analytics-grid,.team-grid,.campaign-grid,.form-grid,.form-grid.four-col {grid-template-columns:minmax(0,1fr)}
+  .form-grid .span-2 {grid-column:auto}
+  .panel-heading,.member-controls,.role-item,.team-member,.snapshot-row,.inline-form,.modal-footer {flex-wrap:wrap}
+  .member-main {flex:1 1 130px}
+  .member-controls {width:100%}
+  .member-controls select,.inline-form input,.report-campaign-id code {min-width:0;max-width:100%}
+  .panel,.campaign-card {padding-inline:12px}
+  .crm-filters label {flex:1 1 135px}
+  .crm-filters input,.crm-filters select,.modal-form input,.modal-form select,.modal-form textarea,
+  .heading-filter,.filter-select select,.inline-form input {font-size:16px}
+  .button,.icon-button,.crm-filters input,.crm-filters select,.modal-form select,.modal-form input:not([type="radio"],[type="checkbox"]) {min-height:44px}
+  .modal-backdrop {padding:8px}
+  .modal-card,.detail-drawer {width:100%;max-width:calc(100dvw - 16px);max-height:calc(100dvh - 16px);overflow:auto;overscroll-behavior:contain}
+  .detail-drawer {max-height:100dvh}
+  .form-grid>label,.modal-form>label,.contact-draft-row>* {min-width:0}
+  .contact-draft-row {grid-template-columns:minmax(84px,1fr) minmax(0,1.5fr) 30px}
+  .table-wrap,.crm-kanban {max-inline-size:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+  .dashboard-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat-card {padding-inline:10px;min-width:0}
+  .stat-card strong {overflow-wrap:anywhere}
+}
+@media(max-width:380px) {
+  .roi-banner,.quote-summary-row {grid-template-columns:minmax(0,1fr)}
+  .bar-row {grid-template-columns:minmax(0,1fr) auto}
+  .bar-label,.bar-values {min-width:0;overflow-wrap:anywhere}
+}
