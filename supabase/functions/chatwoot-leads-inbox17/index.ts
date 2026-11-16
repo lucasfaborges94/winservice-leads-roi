@@ -30,11 +30,11 @@ Deno.serve(async (request) => {
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return new Response(null, { status: 503 });
-  let campaign: { id: string; platform: string } | undefined;
+  let campaign: { id: string; platform: string; appliance: string | null } | undefined;
   const content = payload.content;
   if (typeof content === "string" && content.length > 0 && content.length <= 2000) {
     const query = new URLSearchParams({
-      select: "id,platform,expected_whatsapp_message",
+      select: "id,platform,appliance,expected_whatsapp_message",
       organization_id: "eq." + org,
       expected_whatsapp_message: "eq." + content,
       limit: "2",
@@ -49,7 +49,7 @@ Deno.serve(async (request) => {
   const result = await fetch(url + "/rest/v1/marketing_leads?on_conflict=id", {
     method: "POST",
     headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates,return=minimal" },
-    body: JSON.stringify({ id, organization_id: org, created_by: actor, full_name: String(payload.sender?.name ?? "").trim().slice(0, 200) || phone, phone, preferred_contact_channel: "WhatsApp", campaign_id: campaign?.id ?? null, acquisition_source: campaign?.platform === "Orgânico" ? "Busca orgânica" : campaign?.platform ?? "Desconhecido", first_contact_at: new Date(Number.isFinite(timestampMs) && Math.abs(timestampMs) <= 8640000000000000 ? timestampMs : Date.now()).toISOString() }),
+    body: JSON.stringify({ id, organization_id: org, created_by: actor, full_name: String(payload.sender?.name ?? "").trim().slice(0, 200) || phone, phone, preferred_contact_channel: "WhatsApp", campaign_id: campaign?.id ?? null, appliance: campaign?.appliance || "Não informado", entry_method: "automatic", acquisition_source: campaign?.platform === "Orgânico" ? "Busca orgânica" : campaign?.platform ?? "Desconhecido", first_contact_at: new Date(Number.isFinite(timestampMs) && Math.abs(timestampMs) <= 8640000000000000 ? timestampMs : Date.now()).toISOString() }),
   });
   if (!result.ok) {
     console.error("Lead intake insert failed", result.status);
@@ -57,5 +57,4 @@ Deno.serve(async (request) => {
   }
   return new Response(null, { status: 204 });
 });
-
 

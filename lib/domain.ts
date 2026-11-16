@@ -7,6 +7,8 @@ export type Campaign = CampaignOption & {
   organization_id: string;
   manager_user_id: string | null;
   expected_whatsapp_message: string | null;
+  external_account_id: string | null;
+  appliance: string | null;
   external_campaign_id: string | null;
   objective: string | null;
   landing_page: string | null;
@@ -26,6 +28,7 @@ export type Lead = {
   id: string;
   organization_id: string;
   campaign_id: string | null;
+  entry_method: "manual" | "automatic";
   full_name: string;
   phone: string;
   email: string | null;
@@ -60,6 +63,7 @@ export type Quote = {
   id: string;
   organization_id: string;
   lead_id: string;
+  detailed_url: string | null;
   quote_number: string | null;
   title: string;
   description: string | null;
@@ -176,4 +180,3 @@ export const canManageCrm = (role: Role, permissions: string[] = []) => ["owner"
 export const canManageCampaigns = (role: Role, permissions: string[] = []) => ["owner", "admin", "marketing"].includes(role) || permissions.includes("campaign_manage");
 export const canSeeAnalytics = (role: Role, permissions: string[] = []) => ["owner", "admin", "marketing", "analyst", "traffic_manager"].includes(role) || permissions.some((permission) => ["campaign_manage", "analytics"].includes(permission));
 export const canManageTeam = (role: Role) => ["owner", "admin"].includes(role);
-
